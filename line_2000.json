@@ -1,0 +1,219 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "background": "whitesmoke",
+  "title": {
+    "text": "Effects of Percentage Expenditure on Schooling (2000)",
+    "font": "Playfair Display",
+    "fontSize": 18,
+    "fontWeight": 600,
+    "color": "#1b5e20",
+    "anchor": "middle"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/tiadavies/Assignment_2/main/merged_data.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "percentage_expenditure": "number",
+        "Schooling": "number",
+        "Year": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.Year == 2000"
+    },
+    {
+      "filter": "isFinite(datum.percentage_expenditure) && isFinite(datum.Schooling) && datum.percentage_expenditure != 0 && datum.Schooling != 0"
+    },
+    {
+      "calculate": "round(datum.percentage_expenditure * 1000)/1000",
+      "as": "percentage_expenditure_rounded"
+    },
+    {
+      "calculate": "round(datum.Schooling * 1000)/1000",
+      "as": "Schooling_rounded"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "point": true
+      },
+      "encoding": {
+        "x": {
+          "field": "percentage_expenditure_rounded",
+          "type": "quantitative",
+          "title": "Percentage Expenditure",
+          "axis": {
+            "labelFont": "Open Sans",
+            "titleFont": "Open Sans",
+            "labelFontSize": 12,
+            "titleFontSize": 14,
+            "labelColor": "#37474f",
+            "titleColor": "#1b5e20"
+          },
+          "scale": {
+            "type": "symlog",
+            "constant": 10,
+            "domain": [
+              0,
+              10000
+            ]
+          }
+        },
+        "y": {
+          "field": "Schooling_rounded",
+          "type": "quantitative",
+          "title": "Schooling",
+          "axis": {
+            "labelFont": "Open Sans",
+            "titleFont": "Open Sans",
+            "labelFontSize": 12,
+            "titleFontSize": 14,
+            "labelColor": "#37474f",
+            "titleColor": "#1b5e20"
+          }
+        },
+        "color": {
+          "field": "Status",
+          "type": "nominal",
+          "scale": {
+            "scheme": "category10"
+          },
+          "legend": {
+            "titleFont": "Open Sans",
+            "labelFont": "Open Sans",
+            "titleFontSize": 10,
+            "labelFontSize": 9,
+            "titleColor": "#1b5e20",
+            "labelColor": "#37474f",
+            "symbolSize": 60
+          }
+        },
+        "tooltip": [
+          {
+            "field": "Country",
+            "type": "nominal"
+          },
+          {
+            "field": "Schooling_rounded",
+            "type": "quantitative",
+            "title": "Schooling"
+          },
+          {
+            "field": "percentage_expenditure_rounded",
+            "type": "quantitative",
+            "title": "Percentage Expenditure"
+          },
+          {
+            "field": "Status",
+            "type": "nominal"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "x": 30,
+            "y": 1.3,
+            "x2": 14,
+            "y2": 2.7
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "color": "gray",
+        "strokeDash": [
+          4,
+          4
+        ]
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "y",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "x2"
+        },
+        "y2": {
+          "field": "y2"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "text": "Niger has the lowest average years of schooling at 2.8",
+            "x": 150,
+            "y": 1.1
+          },
+          {
+            "text": "Australia has the highest average years of schooling at 20.4",
+            "x": 1600,
+            "y": 20.5
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "font": "Open Sans",
+        "fontSize": 10,
+        "color": "darkslategrey"
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "y",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "text",
+          "type": "nominal"
+        }
+      }
+    }
+  ],
+  "config": {
+    "font": "Open Sans",
+    "view": {
+      "stroke": "transparent"
+    },
+    "legend": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 9,
+      "titleFontSize": 10,
+      "titleColor": "#1b5e20",
+      "labelColor": "#37474f",
+      "orient": "right",
+      "symbolSize": 60
+    },
+    "axis": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "labelColor": "#37474f",
+      "titleColor": "#1b5e20",
+      "gridColor": "#e0e0e0",
+      "domainColor": "#bdbdbd"
+    }
+  }
+}

@@ -1,0 +1,244 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "background": "whitesmoke",
+  "title": {
+    "text": "Distribution of Life Expectancy based on GDP",
+    "font": "Playfair Display",
+    "fontSize": 18,
+    "fontWeight": 600,
+    "color": "#1b5e20",
+    "anchor": "middle"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/tiadavies/Assignment_2/main/merged_data.csv"
+  },
+  "transform": [
+    {
+      "filter": "isValid(datum['Life_expectancy']) && datum['Life_expectancy'] > 0 && isValid(datum.GDP) && datum.GDP > 0"
+    },
+    {
+      "calculate": "datum.GDP / 1000",
+      "as": "GDP_thousands"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "Life_expectancy",
+          "as": "avg_life_expectancy"
+        },
+        {
+          "op": "mean",
+          "field": "GDP_thousands",
+          "as": "avg_GDP_thousands"
+        }
+      ],
+      "groupby": [
+        "Country",
+        "SDG_Region"
+      ]
+    },
+    {
+      "calculate": "format(datum.avg_GDP_thousands, '.3f')",
+      "as": "avg_GDP_thousands_fmt"
+    }
+  ],
+  "layer": [
+    {
+      "selection": {
+        "region_select": {
+          "type": "multi",
+          "fields": [
+            "SDG_Region"
+          ],
+          "bind": "legend",
+          "toggle": "true"
+        }
+      },
+      "mark": "point",
+      "encoding": {
+        "x": {
+          "field": "avg_GDP_thousands",
+          "type": "quantitative",
+          "title": "Average GDP (thousands)",
+          "axis": {
+            "labelFont": "Open Sans",
+            "titleFont": "Open Sans",
+            "labelFontSize": 12,
+            "titleFontSize": 14,
+            "labelColor": "#37474f",
+            "titleColor": "#1b5e20",
+            "tickCount": 10
+          },
+          "scale": {
+            "type": "symlog",
+            "constant": 10,
+            "domain": [
+              0,
+              80
+            ]
+          }
+        },
+        "y": {
+          "field": "avg_life_expectancy",
+          "type": "quantitative",
+          "title": "Average Life Expectancy (years)",
+          "axis": {
+            "labelFont": "Open Sans",
+            "titleFont": "Open Sans",
+            "labelFontSize": 12,
+            "titleFontSize": 14,
+            "labelColor": "#37474f",
+            "titleColor": "#1b5e20"
+          },
+          "scale": {
+            "domain": [
+              0,
+              90
+            ]
+          }
+        },
+        "color": {
+          "field": "SDG_Region",
+          "type": "nominal",
+          "scale": {
+            "scheme": "category10"
+          },
+          "title": "Region",
+          "legend": {
+            "titleFont": "Open Sans",
+            "labelFont": "Open Sans",
+            "titleFontSize": 10,
+            "labelFontSize": 9,
+            "titleColor": "#1b5e20",
+            "labelColor": "#37474f",
+            "symbolSize": 60
+          }
+        },
+        "opacity": {
+          "condition": {
+            "selection": "region_select",
+            "value": 0.9
+          },
+          "value": 0.15
+        },
+        "tooltip": [
+          {
+            "field": "Country",
+            "type": "nominal",
+            "title": "Country"
+          },
+          {
+            "field": "avg_GDP_thousands_fmt",
+            "type": "quantitative",
+            "title": "Average GDP (thousands)"
+          },
+          {
+            "field": "avg_life_expectancy",
+            "type": "quantitative",
+            "title": "Average Life Expectancy"
+          },
+          {
+            "field": "SDG_Region",
+            "type": "nominal",
+            "title": "Region"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "x": 15,
+            "y": 60,
+            "x2": 12,
+            "y2": 76,
+            "text": "Northern America and Europe have the widest GDP range, spanning approximately $54,400 USD"
+          }
+        ]
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "color": "gray",
+            "strokeDash": [
+              4,
+              4
+            ]
+          },
+          "encoding": {
+            "x": {
+              "field": "x",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "y",
+              "type": "quantitative"
+            },
+            "x2": {
+              "field": "x2"
+            },
+            "y2": {
+              "field": "y2"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "font": "Open Sans",
+            "fontSize": 10,
+            "align": "left",
+            "baseline": "middle",
+            "dx": -75,
+            "dy": 10,
+            "color": "darkslategrey"
+          },
+          "encoding": {
+            "x": {
+              "field": "x",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "y",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "text"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "config": {
+    "font": "Open Sans",
+    "view": {
+      "stroke": "transparent"
+    },
+    "legend": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 9,
+      "titleFontSize": 10,
+      "titleColor": "#1b5e20",
+      "labelColor": "#37474f",
+      "orient": "right",
+      "symbolSize": 60
+    },
+    "axis": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "labelColor": "#37474f",
+      "titleColor": "#1b5e20",
+      "gridColor": "#e0e0e0",
+      "domainColor": "#bdbdbd"
+    }
+  }
+}

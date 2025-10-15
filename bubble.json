@@ -1,0 +1,185 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "background": "whitesmoke",
+  "title": {
+    "text": "Effects of Green Area on Life Expectancy (2000-2010)",
+    "font": "Playfair Display",
+    "fontSize": 18,
+    "fontWeight": 600,
+    "color": "#1b5e20",
+    "anchor": "middle"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/tiadavies/Assignment_2/main/merged_data.csv"
+  },
+  "params": [
+    {
+      "name": "Selected_Year",
+      "value": 2010,
+      "bind": {
+        "input": "select",
+        "options": [2000, 2010],
+        "labels": ["2000", "2010"],
+        "name": "Select Year: "
+      }
+    },
+    {
+      "name": "Min_GreenArea",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 500,
+        "step": 1,
+        "name": "Minimum Green Area (m²/person): "
+      }
+    },
+    {
+      "name": "Max_GreenArea",
+      "value": 500,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 500,
+        "step": 1,
+        "name": "Maximum Green Area (m²/person): "
+      }
+    },
+    {
+      "name": "Min_Population",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 350000000,
+        "step": 1000000,
+        "name": "Minimum Population: "
+      }
+    },
+    {
+      "name": "Max_Population",
+      "value": 350000000,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 350000000,
+        "step": 1000000,
+        "name": "Maximum Population: "
+      }
+    }
+  ],
+  "transform": [
+    { "filter": "datum.Year == Selected_Year" },
+    {
+      "filter": "datum.green_percapita >= Min_GreenArea && datum.green_percapita <= Max_GreenArea"
+    },
+    { "filter": "datum.Population != null && datum.Population > 0" },
+    {
+      "filter": "datum.Population >= Min_Population && datum.Population <= Max_Population"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "green_percapita",
+      "type": "quantitative",
+      "title": "Green area per capita (m²/person)",
+      "axis": { "tickCount": 7, "labelFont": "Open Sans", "titleFont": "Open Sans" },
+      "scale": { "type": "symlog", "constant": 10, "domain": [0, 500] }
+    },
+    "y": {
+      "field": "Life_expectancy",
+      "type": "quantitative",
+      "title": "Life Expectancy (years)",
+      "axis": { "tickCount": 6, "labelFont": "Open Sans", "titleFont": "Open Sans" },
+      "scale": { "domain": [0, 100] }
+    }
+  },
+  "layer": [
+    {
+      "selection": {
+        "region_select": {
+          "type": "multi",
+          "fields": ["SDG_Region"],
+          "bind": "legend",
+          "toggle": "true"
+        }
+      },
+      "mark": { "type": "circle" },
+      "encoding": {
+        "size": {
+          "field": "Population",
+          "type": "quantitative",
+          "scale": {
+            "type": "threshold",
+            "domain": [1000000, 30000000, 60000000, 100000000, 300000000],
+            "range": [50, 150, 300, 500, 700, 900]
+          },
+          "legend": { "format": ".1s" }
+        },
+        "color": {
+          "field": "SDG_Region",
+          "type": "nominal",
+          "title": "Region",
+          "scale": { "scheme": "category10" },
+          "legend": { "labelFont": "Open Sans", "titleFont": "Open Sans" }
+        },
+        "opacity": {
+          "condition": { "selection": "region_select", "value": 0.9 },
+          "value": 0.15
+        },
+        "tooltip": [
+          { "field": "Country", "type": "nominal", "title": "Country" },
+          { "field": "Life_expectancy", "type": "quantitative", "format": ".1f", "title": "Life Expectancy (years)" },
+          { "field": "green_percapita", "type": "quantitative", "title": "Green area per capita (m²/person)", "format": ".2f" },
+          { "field": "Population", "type": "quantitative", "format": ",", "title": "Population" },
+          { "field": "SDG_Region", "type": "nominal", "title": "Region" }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "baseline": "middle",
+        "dx": -10,
+        "fontSize": 11,
+        "fontStyle": "italic",
+        "font": "Open Sans"
+      }
+    }
+  ],
+  "config": {
+    "font": "Open Sans",
+    "view": { "stroke": "transparent" },
+    "axis": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "labelColor": "#37474f",
+      "titleColor": "#1b5e20",
+      "gridColor": "#e0e0e0",
+      "domainColor": "#bdbdbd"
+    },
+    "legend": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 9,
+      "titleFontSize": 12,
+      "titleColor": "#1b5e20",
+      "labelColor": "#37474f",
+      "orient": "right",
+      "symbolSize": 80
+    },
+    "title": {
+      "font": "Open Sans",
+      "fontSize": 18,
+      "fontWeight": 600,
+      "color": "#1b5e20",
+      "anchor": "start"
+    },
+    "mark": { "strokeWidth": 1.2, "color": "#2e7d32" }
+  }
+}

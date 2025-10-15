@@ -1,0 +1,204 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Distribution of Immunisations",
+    "font": "Playfair Display",
+    "fontSize": 18,
+    "fontWeight": 600,
+    "color": "#1b5e20",
+    "anchor": "middle"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/tiadavies/Assignment_2/main/merged_data.csv"
+  },
+  "transform": [
+    {
+      "calculate": "datum.GDP / 1000",
+      "as": "GDP_thousands"
+    },
+    {
+      "fold": [
+        "Hepatitis_B",
+        "Diphtheria",
+        "Polio"
+      ],
+      "as": [
+        "Indicator",
+        "Value"
+      ]
+    },
+    {
+      "calculate": "datum.Indicator === 'Hepatitis_B' ? 'Hepatitis B' : datum.Indicator",
+      "as": "Indicator_label"
+    },
+    {
+      "filter": "isValid(datum.Value) && datum.Value > 0 && isValid(datum.GDP) && datum.GDP > 0"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "Value",
+          "as": "avg_coverage"
+        },
+        {
+          "op": "mean",
+          "field": "GDP_thousands",
+          "as": "avg_GDP_thousands"
+        }
+      ],
+      "groupby": [
+        "Country",
+        "SDG_Region",
+        "Indicator_label"
+      ]
+    },
+    {
+      "calculate": "format(datum.avg_GDP_thousands, '.3f')",
+      "as": "avg_GDP_thousands_fmt"
+    }
+  ],
+  "facet": {
+    "field": "Indicator_label",
+    "type": "nominal",
+    "header": {
+      "title": null,
+      "labelFont": "Open Sans",
+      "labelFontSize": 14,
+      "labelColor": "#1b5e20"
+    }
+  },
+  "spec": {
+    "layer": [
+      {
+        "selection": {
+          "region_select": {
+            "type": "multi",
+            "fields": [
+              "SDG_Region"
+            ],
+            "bind": "legend",
+            "toggle": "true"
+          }
+        },
+        "mark": "point",
+        "encoding": {
+          "x": {
+            "field": "avg_GDP_thousands",
+            "type": "quantitative",
+            "title": "Average GDP (thousands)",
+            "axis": {
+              "labelFont": "Open Sans",
+              "titleFont": "Open Sans",
+              "labelFontSize": 10,
+              "titleFontSize": 12,
+              "labelColor": "#37474f",
+              "titleColor": "#1b5e20",
+              "tickCount": 10
+            },
+            "scale": {
+              "type": "symlog",
+              "constant": 10,
+              "domain": [
+                0,
+                80
+              ]
+            }
+          },
+          "y": {
+            "field": "avg_coverage",
+            "type": "quantitative",
+            "title": null,
+            "axis": {
+              "labelFont": "Open Sans",
+              "titleFont": "Open Sans",
+              "labelFontSize": 10,
+              "titleFontSize": 14,
+              "labelColor": "#37474f",
+              "titleColor": "#1b5e20"
+            }
+          },
+          "color": {
+            "field": "SDG_Region",
+            "type": "nominal",
+            "scale": {
+              "scheme": "category10"
+            },
+            "legend": {
+              "titleFont": "Open Sans",
+              "labelFont": "Open Sans",
+              "titleFontSize": 10,
+              "labelFontSize": 9,
+              "titleColor": "#1b5e20",
+              "labelColor": "#37474f",
+              "orient": "right",
+              "symbolSize": 60
+            },
+            "title": "Region"
+          },
+          "opacity": {
+            "condition": {
+              "selection": "region_select",
+              "value": 0.9
+            },
+            "value": 0.15
+          },
+          "tooltip": [
+            {
+              "field": "Country",
+              "type": "nominal",
+              "title": "Country"
+            },
+            {
+              "field": "Indicator_label",
+              "type": "nominal",
+              "title": "Disease"
+            },
+            {
+              "field": "avg_coverage",
+              "type": "quantitative",
+              "title": "Average Coverage"
+            },
+            {
+              "field": "avg_GDP_thousands_fmt",
+              "type": "quantitative",
+              "title": "Average GDP (thousands)"
+            },
+            {
+              "field": "SDG_Region",
+              "type": "nominal",
+              "title": "Region"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "config": {
+    "font": "Open Sans",
+    "view": {
+      "stroke": "transparent"
+    },
+    "legend": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 9,
+      "titleFontSize": 10,
+      "titleColor": "#1b5e20",
+      "labelColor": "#37474f",
+      "orient": "right",
+      "symbolSize": 60
+    },
+    "axis": {
+      "labelFont": "Open Sans",
+      "titleFont": "Open Sans",
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "labelColor": "#37474f",
+      "titleColor": "#1b5e20",
+      "gridColor": "#e0e0e0",
+      "domainColor": "#bdbdbd"
+    },
+    "background": "whitesmoke"
+  }
+}

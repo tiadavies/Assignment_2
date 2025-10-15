@@ -1,0 +1,143 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": "container",
+    "height": "container",
+    "background": "whitesmoke",
+    "title": {
+        "text": "Regional Distribution of BMI",
+        "font": "Playfair Display",
+        "fontSize": 18,
+        "fontWeight": 600,
+        "color": "#1b5e20",
+        "anchor": "middle"
+    },
+    "autosize": {
+        "type": "fit",
+        "contains": "padding"
+    },
+    "data": {
+        "url": "https://raw.githubusercontent.com/tiadavies/Assignment_2/main/merged_data.csv"
+    },
+    "transform": [
+        {
+            "filter": "datum.BMI != null && datum.BMI > 0"
+        },
+        {
+            "filter": "Region_selection == null || lower(replace(datum.SDG_Region, /\\s+/g, '')) == lower(replace(Region_selection, /\\s+/g, ''))"
+        }
+    ],
+    "params": [
+        {
+            "name": "Region_selection",
+            "value": null,
+            "bind": {
+                "input": "select",
+                "options": [
+                    null,
+                    "Northern America and Europe",
+                    "Latin America and the Caribbean",
+                    "Sub-Saharan Africa",
+                    "Central and Southern Asia",
+                    "Eastern and South-eastern Asia",
+                    "Western Asia and Northern Africa",
+                    "Australia and New Zealand"
+                ],
+                "labels": [
+                    "Show All",
+                    "Northern America and Europe",
+                    "Latin America and the Caribbean",
+                    "Sub-Saharan Africa",
+                    "Central and Southern Asia",
+                    "Eastern and South-eastern Asia",
+                    "Western Asia and Northern Africa",
+                    "Australia and New Zealand"
+                ],
+                "name": "Region Selection: "
+            }
+        }
+    ],
+    "mark": {
+        "type": "boxplot",
+        "extent": 1.5,
+        "outliers": true
+    },
+    "encoding": {
+        "x": {
+            "field": "SDG_Region",
+            "type": "nominal",
+            "title": "Region",
+            "axis": {
+                "labels": false
+            }
+        },
+        "y": {
+            "field": "BMI",
+            "type": "quantitative",
+            "title": "BMI",
+            "scale": {
+                "domain": [
+                    0,
+                    70
+                ]
+            }
+        },
+        "color": {
+            "field": "SDG_Region",
+            "type": "nominal",
+            "scale": {
+                "scheme": "category10"
+            },
+            "legend": {
+                "title": "Region"
+            }
+        },
+        "tooltip": [
+            {
+                "field": "SDG_Region",
+                "type": "nominal",
+                "title": "Region"
+            },
+            {
+                "field": "BMI",
+                "type": "quantitative",
+                "title": "BMI"
+            }
+        ]
+    },
+    "config": {
+        "view": {
+            "stroke": "transparent"
+        },
+        "axis": {
+            "labelFont": "Open Sans",
+            "titleFont": "Open Sans",
+            "labelFontSize": 12,
+            "titleFontSize": 14,
+            "labelColor": "#37474f",
+            "titleColor": "#1b5e20",
+            "gridColor": "#e0e0e0",
+            "domainColor": "#bdbdbd"
+        },
+        "legend": {
+            "labelFont": "Open Sans",
+            "titleFont": "Open Sans",
+            "labelFontSize": 9,
+            "titleFontSize": 12,
+            "titleColor": "#1b5e20",
+            "labelColor": "#37474f",
+            "orient": "right",
+            "symbolSize": 80
+        },
+        "title": {
+            "font": "Open Sans",
+            "fontSize": 18,
+            "fontWeight": 600,
+            "color": "#1b5e20",
+            "anchor": "start"
+        },
+        "mark": {
+            "strokeWidth": 1.2,
+            "color": "#2e7d32"
+        }
+    }
+}
