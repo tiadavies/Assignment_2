@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Greener Cities, Healthier Lives | A Global Story</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans:wght@400;600&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* === BASE === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      background: linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 40%, #aed581 100%);
+      background-attachment: fixed;
+      color: #263238;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Playfair Display', serif;
+      color: #1b5e20;
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 0.3rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      text-align: left;
+      margin-bottom: 1rem;
+      color: #2e7d32;
+    }
+
+    p {
+      line-height: 1.6;
+      max-width: 850px;
+      margin: 0 auto 1rem;
+      color: #37474f;
+    }
+
+    /* === HEADER === */
+    header {
+      background: #f1f8e9;
+      padding: 5rem 1rem 3rem;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: #33691e;
+      max-width: 700px;
+      margin: 1rem auto 0;
+    }
+
+    /* === SECTION BASE === */
+    section {
+      background: whitesmoke;
+      border-radius: 20px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 4rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    section h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      text-align: left;
+      margin-bottom: 2.5rem;
+      max-width: 900px;
+    }
+
+    /* === VISUAL CONTAINERS === */
+    .vis-container {
+      background: whitesmoke;
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      min-height: 420px;
+      transition: transform 0.3s ease;
+    }
+
+    .vis-container:hover {
+      transform: translateY(-4px);
+    }
+
+    /* === MAP-STYLE GRID LAYOUTS === */
+    .overview-layout,
+    .line-layout,
+    .scatter-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      align-items: start;
+      margin-top: 2rem;
+    }
+
+    .map-column,
+    .line-column,
+    .scatter-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .map-text,
+    .line-text,
+    .scatter-text {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      align-self: start;
+    }
+
+    .map-text h3,
+    .line-text h3,
+    .scatter-text h3 {
+      color: #1b5e20;
+      margin-bottom: 0.75rem;
+    }
+
+    .map-text p,
+    .line-text p,
+    .scatter-text p {
+      color: #2e3d29;
+      line-height: 1.6;
+    }
+
+    /* === BUBBLE CHART LAYOUT === */
+    .bubble-layout {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      align-items: start;
+      margin-top: 2rem;
+    }
+
+    .bubble-text {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      align-self: start;
+    }
+
+    .bubble-text h3 {
+      color: #1b5e20;
+      margin-bottom: 0.75rem;
+    }
+
+    .bubble-text p {
+      color: #2e3d29;
+      line-height: 1.6;
+    }
+
+    /* === CENTERED VISUALS === */
+    .vis-center {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .vis-center .vis-container {
+      width: 90%;
+      max-width: 900px;
+    }
+
+    /* === ICON TITLE === */
+    .icon-section-title {
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    /* === KEY VARIABLES SECTION === */
+    .variable-card {
+      padding: 2rem;
+      max-width: 900px;
+      text-align: left;
+      background: linear-gradient(180deg, #f1f8e9 0%, #ffffff 100%);
+      border-radius: 20px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .variable-list {
+      list-style-type: none;
+      padding-left: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem 2rem;
+    }
+
+    .variable-list li {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 1rem 1.2rem;
+      border-left: 4px solid #66bb6a;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+      color: #2e3d29;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .variable-list strong {
+      color: #1b5e20;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+    }
+
+    @media (max-width: 900px) {
+      .variable-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* === FOOTER === */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      color: #1b5e20;
+    }
+
+    footer a {
+      color: #2e7d32;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1000px) {
+
+      .overview-layout,
+      .bubble-layout,
+      .line-layout,
+      .scatter-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .map-text,
+      .bubble-text,
+      .line-text,
+      .scatter-text {
+        order: -1;
+      }
+    }
+
+    /* === SCATTER AND SMALL MULTIPLES TEXTBOXES === */
+    .scatter-textbox {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      max-width: 900px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .scatter-textbox h3 {
+      font-family: 'Playfair Display', serif;
+      color: #1b5e20;
+      margin-bottom: 0.75rem;
+    }
+
+    .scatter-textbox p {
+      color: #2e3d29;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    /* === BOX PLOT TEXTBOX === */
+    .bmi-textbox {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      max-width: 900px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .bmi-textbox p {
+      color: #2e3d29;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Greener Cities, Healthier Lives</h1>
+    <p>Exploring the global connections between urban green space, health, and development from 2000–2010.</p>
+  </header>
+
+  <!-- SECTION: KEY VARIABLES -->
+  <section>
+    <h2 class="icon-section-title">Understanding the Key Variables</h2>
+    <p>
+      The indicators below provide essential context for interpreting the visualisations that follow. They connect
+      environmental quality, health outcomes, and economic development—revealing how urban design and social investment
+      shape human wellbeing across the globe.
+    </p>
+
+    <div class="vis-center">
+      <div class="vis-container variable-card">
+        <ul class="variable-list">
+          <li>
+            <strong>Green Area per Capita:</strong>
+            Portions of urban land covered by long-term vegetation such as trees, shrubs, forests, or perennial grasses
+            that remain green for most of the year. Waterbodies are not included.
+          </li>
+
+          <li>
+            <strong>Life Expectancy:</strong>
+            The average number of years a person is expected to live in years.
+          </li>
+
+          <li>
+            <strong>Alcohol Consumption:</strong>
+            Average number of litres of pure alcohol consumed per person.
+          </li>
+
+          <li>
+            <strong>Percentage Expenditure on Health:</strong>
+            Total expenditure on health as a percentage of GDP per capita.
+          </li>
+
+          <li>
+            <strong>Hepatitis B, Polio, and Diphtheria Immunisation:</strong>
+            Immunisation coverage among 1 year olds.
+          </li>
+
+          <li>
+            <strong>Body Mass Index (BMI):</strong>
+            The average BMI across the population.
+          </li>
+
+          <li>
+            <strong>Gross Domestic Product (GDP):</strong>
+            Expressed in US dollars
+          </li>
+
+          <li>
+            <strong>Schooling:</strong>
+            The average number of years of formal education completed per person.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: GLOBAL OVERVIEW -->
+  <section>
+    <h2 class="icon-section-title">Global Overview</h2>
+    <p>
+      How are green spaces and life expectancy distributed across the world? These maps provide an overview of global
+      disparities and their evolution in 2000 and 2010.
+    </p>
+
+    <div class="overview-layout">
+      <div class="map-column">
+        <div id="green_map" class="vis-container"></div>
+        <div id="life_expectancy_map" class="vis-container"></div>
+      </div>
+      <div class="map-text">
+        <h3>Environmental and Health Patterns</h3>
+        <p>
+          Between 2000 and 2010, <b style="color:#2e7d32;">global green area per capita</b> declined across nearly all
+          regions. Urban expansion and land-use change reduced the availability of vegetated land in many countries,
+          especially in developed urban centres. <b>The United States</b> saw one of the most pronounced declines,
+          with average green area dropping from around 580 m² to roughly 420 m² per person, reflecting the growing
+          pressure of urbanisation on natural and recreational spaces.
+        </p>
+
+        <p>
+          In contrast, <b style="color:#6a1b9a;">life expectancy</b> generally rose during the same period, highlighting
+          continued improvements in global health and living standards. Advances in healthcare systems, vaccination
+          programs, and education likely contributed, even as environmental pressures intensified. Many nations in
+          Europe, Asia, and Latin America experienced steady gains in longevity.
+        </p>
+
+        <p>
+          However, this pattern was not universal. <b>Russia</b> and <b>Libya</b> both recorded a decline in
+          <b style="color:#6a1b9a;">life expectancy</b> in 2010 compared to 2000, pointing to regional instability,
+          health crises, or socioeconomic disruption during that decade. These exceptions remind us that health
+          outcomes are influenced by factors beyond environmental or wealth indicators alone.
+        </p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: GREEN SPACE VS LIFE EXPECTANCY -->
+  <section>
+    <h2 class="icon-section-title">Green Space and Longevity</h2>
+    <p>
+      This bubble chart shows the relationship between green space and life expectancy. Bubble size represents
+      population, and colour indicates region.
+    </p>
+
+    <div class="bubble-layout">
+      <div class="bubble-text">
+        <h3>Green Space and Longevity Insights</h3>
+        <p>
+          Across both years, countries with both high and low levels of green area show similar life expectancies. Regions such as
+          <b>Northern
+            America and Europe</b> and <b>Australia and New Zealand</b> consistently maintain higher life expectancies
+          regardless of green area, suggesting other factors like healthcare, income, and education play stronger roles.
+        </p>
+        <p>
+          In contrast, <b>Sub-Saharan Africa</b> and parts of <b>Central and Southern Asia</b> display lower life
+          expectancies even
+          when green space is relatively available, indicating that green area alone does not directly translate to
+          better health outcomes. Between 2000 and 2010, life expectancy increases modestly across most regions,
+          pointing to global improvements in living conditions and healthcare rather than changes in environmental space
+          per person.
+        </p>
+      </div>
+      <div id="bubble" class="vis-container"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: REGIONAL LIFESTYLES -->
+  <section>
+    <h2 class="icon-section-title">Body Mass Index Distributions</h2>
+    <p>
+      Variations in health outcomes are shaped not only by environment but also by lifestyle. Here we explore BMI
+      distributions around the world.
+    </p>
+
+    <div class="vis-center">
+      <div id="boxplot" class="vis-container"></div>
+    </div>
+
+    <div class="vis-center">
+      <div class="bmi-textbox">
+        <p>
+          <b>Australia and New Zealand</b> and <b>Northern America and Europe</b> display the highest median BMI values,
+          suggesting higher rates of overweight and obesity, which may increase risks for chronic diseases such as
+          diabetes and heart disease.
+        </p>
+        <p>
+          In contrast, <b>Central and Southern Asia</b>, <b>Eastern and South-eastern Asia</b>, and
+          <b>Sub-Saharan Africa</b> show lower BMI levels, potentially reflecting undernutrition or limited access to
+          high-calorie foods. <b>Latin America and the Caribbean</b> and <b>Western Asia and Northern Africa</b> fall in
+          the mid to upper range, indicating emerging health challenges linked to dietary transitions.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: DEVELOPMENT AND EDUCATION -->
+  <section>
+    <h2 class="icon-section-title">Education, GDP, and Development</h2>
+    <p>
+      Economic and educational development underpin improvements in both health and sustainability. The following
+      charts compare schooling years and GDP across developing and developed nations in 2000 and 2010.
+    </p>
+
+    <div class="line-layout">
+      <div class="line-column">
+        <div id="line_2000" class="vis-container"></div>
+        <div id="line_2010" class="vis-container"></div>
+      </div>
+      <div class="line-text">
+        <h3>Education and GDP Growth</h3>
+        <p>
+          In 2000, the relationship between <b>percentage expenditure on education</b> and <b>average years of
+            schooling</b> shows a clear divide between developed and developing countries. Developed nations generally
+          had higher average schooling, with <b>Australia</b> leading at 20.4 years. Developing countries varied more,
+          with <b>Niger</b> at the bottom, averaging only 2.8 years, despite some nations spending significant GDP
+          shares on education.
+        </p>
+        <p>
+          By 2010, the trend persisted: developed countries maintained high schooling levels, with <b>New Zealand</b> at
+          the top at 20.4 years. Most developing nations made moderate gains, reflecting gradual improvements in
+          education systems. However, disparities remain, highlighting persistent global inequality in educational
+          attainment.
+        </p>
+        <p>
+          Niger still had the lowest average schooling in 2010, at 4.5 years, showing that increased global investment
+          does not always translate into higher outcomes. These charts underscore how both <b>expenditure and governance
+            factors</b> influence the effectiveness of educational investment.
+        </p>
+
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: HEALTH OUTCOMES AND GDP -->
+  <section>
+    <h2 class="icon-section-title">Health Outcomes and Economic Prosperity</h2>
+    <p>
+      The following scatterplots explore how economic performance correlates with life expectancy and key immunisation
+      rates. Together, they reveal the intertwined nature of health and development.
+    </p>
+
+    <!-- Scatterplot -->
+    <div class="vis-center">
+      <div id="scatter" class="vis-container"></div>
+    </div>
+    <!-- Text below scatterplot -->
+    <div class="vis-center">
+      <div class="scatter-textbox">
+        <p>
+          The chart shows the <b>distribution of life expectancy based on GDP</b>. Northern America and Europe have the
+          widest GDP range, spanning approximately $54,400 USD. Countries with higher GDP generally exhibit higher life
+          expectancy, while lower-GDP regions, particularly <b>Sub-Saharan Africa</b>, tend to have lower average life
+          spans.
+        </p>
+      </div>
+    </div>
+
+    <!-- Small multiples -->
+    <div class="vis-center">
+      <div id="small_multiples" class="vis-container"></div>
+    </div>
+    <!-- Text below small multiples -->
+    <div class="vis-center">
+      <div class="scatter-textbox">
+        <p>
+          The <b>immunisation distribution</b> for Diphtheria, Hepatitis B, and Polio shows that developed regions
+          maintain high coverage near 100%, whereas developing regions display wider variation. <b>Sub-Saharan
+            Africa</b> and parts of <b>Central and Southern Asia</b> show lower immunisation rates despite GDP growth,
+          reflecting challenges in healthcare access and delivery.
+        </p>
+        <p>
+          Overall, these charts highlight how <b>GDP and regional healthcare systems</b> influence life expectancy and
+          immunisation coverage, with higher economic resources generally correlating with better health outcomes.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPT EMBEDS -->
+  <script>
+    const embeds = [
+      { id: "green_map", spec: "./green_map.json" },
+      { id: "life_expectancy_map", spec: "./life_expectancy_map.json" },
+      { id: "boxplot", spec: "./boxplot.json" },
+      { id: "bubble", spec: "./bubble.json" },
+      { id: "line_2000", spec: "./line_2000.json" },
+      { id: "line_2010", spec: "./line_2010.json" },
+      { id: "scatter", spec: "./scatter.json" },
+      { id: "small_multiples", spec: "./small_multiples.json" }
+    ];
+
+    embeds.forEach(e => {
+      vegaEmbed(`#${e.id}`, e.spec, {
+        actions: false,
+        renderer: "canvas",
+        autosize: { type: "fit", contains: "padding" },
+        config: { background: null }
+      })
+        .then(res => {
+          window.addEventListener("resize", () => res.view.resize());
+        })
+        .catch(console.error);
+    });
+  </script>
+</body>
+
+</html>
