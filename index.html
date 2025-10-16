@@ -319,6 +319,14 @@
       line-height: 1.6;
       margin-bottom: 0.75rem;
     }
+
+    /* Narrower paragraph width for 10 words per line */
+    section p {
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
   </style>
 </head>
 
@@ -438,7 +446,8 @@
       <div class="bubble-text">
         <h3>Green Space and Longevity Insights</h3>
         <p>
-          Across both years, countries with both high and low levels of green area show similar life expectancies. Regions such as
+          Across both years, countries with both high and low levels of green area show similar life expectancies.
+          Regions such as
           <b>Northern
             America and Europe</b> and <b>Australia and New Zealand</b> consistently maintain higher life expectancies
           regardless of green area, suggesting other factors like healthcare, income, and education play stronger roles.
@@ -595,6 +604,16 @@
         .catch(console.error);
     });
   </script>
+
+  <footer>
+    <p>
+      <b>Data sources:</b> <a href="https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who"
+        target="_blank">Life Expectancy (WHO)</a> by KumarRajarshi on Kaggle |
+      <a href="https://data.unhabitat.org/pages/open-spaces-and-green-areas" target="_blank">Open Spaces and Green
+        Areas</a> by UN Habitat
+    </p>
+  </footer>
+
 </body>
 
 </html>
